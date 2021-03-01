@@ -67,21 +67,26 @@ var FiveMinutesMetricsMap = map[string][]Metric{
 	},
 }
 
-var _ FetcherClient = &testServerClient{}
+var _ MetricsProviderClient = &testServerClient{}
 
 const (
-	FirstNode  = "worker-1"
-	SecondNode = "worker-2"
+	FirstNode            = "worker-1"
+	SecondNode           = "worker-2"
+	TestServerClientName = "TestServerClient"
 )
 
 type testServerClient struct {
 }
 
-func NewTestMetricsServerClient() FetcherClient {
+func (t testServerClient) Name() string {
+	return TestServerClientName
+}
+
+func NewTestMetricsServerClient() MetricsProviderClient {
 	return testServerClient{}
 }
 
-func (t testServerClient) FetchHostMetrics(host string) ([]Metric, error) {
+func (t testServerClient) FetchHostMetrics(host string, window *Window) ([]Metric, error) {
 	if _, ok := FifteenMinutesMetricsMap[host]; !ok {
 		return nil, nil
 	}
@@ -101,7 +106,7 @@ func (t testServerClient) FetchHostMetrics(host string) ([]Metric, error) {
 	return FifteenMinutesMetricsMap[host], nil
 }
 
-func (t testServerClient) FetchAllHostsMetrics() (map[string][]Metric, error) {
+func (t testServerClient) FetchAllHostsMetrics(window *Window) (map[string][]Metric, error) {
 	// if window.Duration == TenMinutes {
 	// 	return TenMinutesMetricsMap, nil
 	// } else if window.Duration == FiveMinutes {

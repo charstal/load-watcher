@@ -1,5 +1,13 @@
-FROM alpine
+FROM golang:1.15.5
 
-ADD ./bin/load-watcher /usr/local/bin/load-watcher
+RUN go env -w GO111MODULE=on
+RUn go env -w GOPROXY=https://goproxy.cn,direct
+WORKDIR /go/src/github.com/paypal/load-watcher
+COPY . .
+RUN make build
 
-CMD ["/usr/local/bin/load-watcher"]
+FROM alpine:3.12
+
+COPY --from=0 /go/src/github.com/paypal/load-watcher/bin/load-watcher /bin/load-watcher
+
+CMD ["/bin/load-watcher"]
