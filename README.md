@@ -7,6 +7,7 @@ The following metrics provider clients are currently supported:
 
 1) SignalFx
 2) Kubernetes Metrics Server
+3) Prometheus
 
 These clients fetch CPU usage currently, support for other resources will be added later as needed.
 
@@ -45,3 +46,21 @@ GET /watcher
 ```
 
 This will return metrics for all nodes. A query parameter to filter by host can be added with `host`.
+
+## Metrics Provider Configuration
+- By default Kubernetes Metrics Server client is configured. Set `KUBE_CONFIG` env var to your kubernetes client configuration file path if running out of cluster.
+
+- To use the Prometheus client, please configure environment variables `METRICS_PROVIDER_NAME`, `METRICS_PROVIDER_ADDRESS` and `METRICS_PROVIDER_TOKEN` to `Prometheus`, Prometheus address and auth token. Please do not set `METRICS_PROVIDER_TOKEN` if no authentication 
+  is needed to access the Prometheus APIs. Default value of address set is `http://prometheus-k8s:9090` for Prometheus client.
+
+- To use the SignalFx client, please configure `METRICS_PROVIDER_NAME`, `METRICS_PROVIDER_ADDRESS` and `METRICS_PROVIDER_TOKEN` to `SignalFx`, SignalFx address and auth token respectively. Default value of address set is `https://api.signalfx.com` for Prometheus client.
+  
+## Deploy `load-watcher` as a service
+To deploy `load-watcher` as a monitoring service in your Kubernetes cluster, you can run the following.
+```bash
+> kubectl create -f manifests/load-watcher-deployment.yaml
+```
+
+## Using `load-watcher` client
+- `load-watcher-client.go` shows an example to use `load-watcher` packages as libraries in a client mode. When `load-watcher` is running as a
+service exposing an endpoint in a cluster, a client, such as Trimaran plugins, can use its libraries to create a client getting the latest metrics. 

@@ -1,5 +1,5 @@
 /*
-Copyright 2020 PayPal
+Copyright 2021 PayPal
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package watcher
+package api
 
-// Interface to be implemented by any metrics provider client to interact with Watcher
-type FetcherClient interface {
-	// Fetch metrics for given host
-	FetchHostMetrics(host string, window *Window) ([]Metric, error)
-	// Fetch metrics for all hosts
-	FetchAllHostsMetrics(window *Window) (map[string][]Metric, error)
+import "github.com/paypal/load-watcher/pkg/watcher"
+
+// Watcher Client API
+type Client interface {
+	// Returns latest metrics present in load Watcher cache
+	GetLatestWatcherMetrics() (*watcher.WatcherMetrics, error)
 }
